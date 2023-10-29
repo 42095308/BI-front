@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {listMyChartByPageUsingPOST} from "@/services/spring-init/chartController";
-import {Avatar, Card, List, message} from "antd";
+import {Avatar, Card, List, message, Result} from "antd";
 import ReactECharts from "echarts-for-react";
 import {useModel} from "@@/exports";
 import Search from "antd/es/input/Search";
@@ -16,6 +16,8 @@ const MyChartPage: React.FC = () => {
     current: 1,
     // 初始情况下返回每页4条数据(定义初始页面数据数量对象)
     pageSize: 4,
+    sortOrder: 'desc',
+    sortField: 'createTime',
   }
   /*
     定义了一个状态(searchParams)和它对应的更新函数(setSearchParams)，并初始化为initSearchParams;
@@ -142,13 +144,43 @@ const MyChartPage: React.FC = () => {
                 // 描述改成图表类型,如果没有图表类型，就不展示了
                 description={item.chartType ? '图表类型：' + item.chartType : undefined}
               />
-              {/* 最终展示的内容 */}
-              {'分析目标：' + item.goal}
-              {/*
-              把在智能分析页的图表展示复制粘贴到此处;
-              要把后端返回的图表字符串改为对象数组,如果后端返回空字符串，就返回'{}'
-            */}
-              <ReactECharts option={JSON.parse(item.genChart ?? '{}')}/>
+              <>
+                {
+                  item.status === 'wait' && <>
+                    <Result
+                      status="warning"
+                      title="待生成"
+                      subTitle={item.execMessage ?? '任务正在进行排队...'}
+                    />
+                  </>
+                }
+                {
+                  item.status === 'success' && <>
+                    <div style={{marginBottom: 16}}></div>
+                    <p>{'分析目标' + item.goal}</p>
+                    <div style={{marginBottom: 16}}></div>
+                    <ReactECharts option={item.genChart && JSON.parse(item.genChart)}></ReactECharts>
+                  </>
+                }
+                {
+                  item.status === 'running' && <>
+                    <Result
+                      status="info"
+                      title="图标正在生成中"
+                      subTitle={item.execMessage}
+                    />
+                  </>
+                }
+                {
+                  item.status === 'fail' && <>
+                    <Result
+                      status="error"
+                      title="图标生成失败"
+                      subTitle={item.execMessage}
+                    />
+                  </>
+                }
+              </>
             </Card>
           </List.Item>
         )}
