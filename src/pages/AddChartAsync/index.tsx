@@ -1,4 +1,8 @@
-import {genChartByAiAsyncUsingPOST, genChartByAiUsingPOST} from '@/services/spring-init/chartController';
+import {
+  genChartByAiAsyncMqUsingPOST,
+  genChartByAiAsyncUsingPOST,
+  genChartByAiUsingPOST
+} from '@/services/spring-init/chartController';
 import {UploadOutlined} from '@ant-design/icons';
 import {Button, Card, Form, Input, message, Select, Space, Upload} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
@@ -32,7 +36,7 @@ const AddChartAsync: React.FC = () => {
     };
 
     try {
-      const res = await genChartByAiAsyncUsingPOST(params, {}, values.file.file.originFileObj);
+      const res = await genChartByAiAsyncMqUsingPOST(params, {}, values.file.file.originFileObj);
       if (!res?.data) {
         message.error('分析失败');
       } else {

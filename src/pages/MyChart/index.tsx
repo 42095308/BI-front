@@ -81,6 +81,8 @@ const MyChartPage: React.FC = () => {
     // 这个页面首次渲染的时候，以及这个数组中的搜索条件发生变化的时候，会执行loadData方法,自动触发重新搜索
     loadData();
   }, [searchParams]);
+  
+
 
   return (
     // 把页面内容指定一个类名my-chart-page
